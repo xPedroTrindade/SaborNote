@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -55,8 +56,11 @@ export function LoginScreen({ navigation, onLogin }: Props) {
     >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Text style={styles.logo}>🍴</Text>
-          <Text style={styles.titulo}>SaborNote</Text>
+          <Image
+            source={require('../../assets/Sabor_note.png')}
+            style={styles.logoImagem}
+            resizeMode="contain"
+          />
           <Text style={styles.subtitulo}>Suas receitas, sempre à mão</Text>
         </View>
 
@@ -120,8 +124,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 48,
   },
-  logo: {
-    fontSize: 56,
+  logoImagem: {
+    width: 220,
+    height: 100,
     marginBottom: 8,
   },
   titulo: {
