@@ -8,6 +8,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { RecipeFormScreen } from '../screens/RecipeFormScreen';
 import { RecipeDetailScreen } from '../screens/RecipeDetailScreen';
 import { ApiSearchScreen } from '../screens/ApiSearchScreen';
+import { HelpScreen } from '../screens/HelpScreen';
 import { Colors } from '../constants/colors';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,6 +67,11 @@ export function AppNavigator({ autenticado, onLogin, onLogout }: Props) {
               name="ApiSearch"
               component={ApiSearchScreen}
               options={{ title: 'Busca Online', headerBackTitle: 'Voltar' }}
+            />
+            <Stack.Screen
+              name="Help"
+              component={HelpScreen}
+              options={{ title: 'Central de Ajuda', headerBackTitle: 'Voltar' }}
             />
           </>
         )}

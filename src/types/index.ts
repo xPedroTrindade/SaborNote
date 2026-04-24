@@ -70,6 +70,12 @@ export interface MealApiMeal {
   strMeasure20?: string;
 }
 
+export interface MealApiPreview {
+  idMeal: string;
+  strMeal: string;
+  strMealThumb: string;
+}
+
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
@@ -77,4 +83,5 @@ export type RootStackParamList = {
   RecipeForm: { receitaId?: number } | undefined;
   RecipeDetail: { receitaId: number };
   ApiSearch: undefined;
+  Help: undefined;
 };

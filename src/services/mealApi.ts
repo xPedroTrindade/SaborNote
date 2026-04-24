@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MealApiMeal, Receita } from '../types';
+import { MealApiMeal, MealApiPreview, Receita } from '../types';
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
@@ -58,6 +58,17 @@ export function converterMealParaReceita(meal: MealApiMeal): Omit<Receita, 'id'>
     createdAt: agora,
     updatedAt: agora,
   };
+}
+
+export async function buscarPreviewsPorCategoria(categoria: string): Promise<MealApiPreview[]> {
+  const response = await api.get('/filter.php', { params: { c: categoria } });
+  const meals: MealApiPreview[] = response.data.meals ?? [];
+  return meals.slice(0, 12);
+}
+
+export async function buscarMealCompletoPorId(id: string): Promise<MealApiMeal | null> {
+  const response = await api.get('/lookup.php', { params: { i: id } });
+  return response.data.meals?.[0] ?? null;
 }
 
 export const CATEGORIAS_API: Array<{ label: string; valor: string }> = [
