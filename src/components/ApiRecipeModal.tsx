@@ -20,11 +20,13 @@ interface Props {
   onFechar: () => void;
   onImportado: (idMeal: string) => void;
   jaImportado: boolean;
+  /** Se fornecido, usa os dados diretamente sem fazer nova chamada à API */
+  mealCompleto?: MealApiMeal;
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export function ApiRecipeModal({ preview, onFechar, onImportado, jaImportado }: Props) {
+export function ApiRecipeModal({ preview, onFechar, onImportado, jaImportado, mealCompleto }: Props) {
   const [meal, setMeal] = useState<MealApiMeal | null>(null);
   const [carregando, setCarregando] = useState(false);
   const [importando, setImportando] = useState(false);
@@ -32,9 +34,15 @@ export function ApiRecipeModal({ preview, onFechar, onImportado, jaImportado }: 
 
   useEffect(() => {
     if (!preview) return;
-    setMeal(null);
     setErro(false);
-    buscar();
+    if (mealCompleto) {
+      // Dados já disponíveis — usa direto, sem chamada à API
+      setMeal(mealCompleto);
+      setCarregando(false);
+    } else {
+      setMeal(null);
+      buscar();
+    }
   }, [preview?.idMeal]);
 
   async function buscar() {

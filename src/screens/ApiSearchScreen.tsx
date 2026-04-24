@@ -13,7 +13,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, MealApiMeal } from '../types';
+import { RootStackParamList, MealApiMeal, MealApiPreview } from '../types';
 import {
   buscarReceitasNaApi,
   buscarPorCategoria,
@@ -21,6 +21,7 @@ import {
   CATEGORIAS_API,
 } from '../services/mealApi';
 import { inserirReceita } from '../database/recipeRepository';
+import { ApiRecipeModal } from '../components/ApiRecipeModal';
 import { Colors } from '../constants/colors';
 
 type Props = {
@@ -38,6 +39,7 @@ export function ApiSearchScreen({ navigation }: Props) {
   const [importados, setImportados] = useState<Set<string>>(new Set());
   const [modoFiltro, setModoFiltro] = useState<ModoFiltro>('nome');
   const [erro, setErro] = useState('');
+  const [mealSelecionado, setMealSelecionado] = useState<MealApiMeal | null>(null);
 
   async function executarBusca(termo: string) {
     if (!termo.trim()) {
@@ -109,21 +111,20 @@ export function ApiSearchScreen({ navigation }: Props) {
   function renderCard({ item }: { item: MealApiMeal }) {
     const jaImportado = importados.has(item.idMeal);
 
-    // Monta lista de ingredientes para exibição resumida
     const primeirosIngredientes: string[] = [];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 4; i++) {
       const ing = item[`strIngredient${i}` as keyof MealApiMeal] as string;
       if (ing?.trim()) primeirosIngredientes.push(ing.trim());
     }
 
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => setMealSelecionado(item)}
+        activeOpacity={0.85}
+      >
         {item.strMealThumb ? (
-          <Image
-            source={{ uri: item.strMealThumb }}
-            style={styles.cardImagem}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: item.strMealThumb }} style={styles.cardImagem} resizeMode="cover" />
         ) : (
           <View style={styles.cardImagemPlaceholder}>
             <Text style={styles.cardImagemPlaceholderIcon}>🍽</Text>
@@ -135,7 +136,6 @@ export function ApiSearchScreen({ navigation }: Props) {
             {item.strMeal}
           </Text>
 
-          {/* Tags: categoria + origem */}
           <View style={styles.tagsRow}>
             {item.strCategory ? (
               <View style={styles.tag}>
@@ -149,27 +149,32 @@ export function ApiSearchScreen({ navigation }: Props) {
             ) : null}
           </View>
 
-          {/* Primeiros ingredientes */}
           {primeirosIngredientes.length > 0 && (
             <Text style={styles.ingredientesPreview} numberOfLines={1}>
-              {primeirosIngredientes.join(' · ')}
-              {primeirosIngredientes.length < 5 ? '' : '...'}
+              {primeirosIngredientes.join(' · ')}{'...'}
             </Text>
           )}
 
-          {/* Botão importar */}
-          <TouchableOpacity
-            style={[styles.importarBtn, jaImportado && styles.importarBtnFeito]}
-            onPress={() => !jaImportado && handleImportar(item)}
-            disabled={jaImportado}
-            activeOpacity={0.75}
-          >
-            <Text style={[styles.importarBtnTexto, jaImportado && styles.importarBtnTextoFeito]}>
-              {jaImportado ? '✓  Importado' : '↓  Importar'}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.botoesRow}>
+            <TouchableOpacity
+              style={styles.detalhesBtn}
+              onPress={() => setMealSelecionado(item)}
+            >
+              <Text style={styles.detalhesBtnTexto}>Ver receita</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.importarBtn, jaImportado && styles.importarBtnFeito]}
+              onPress={(e) => { e.stopPropagation?.(); !jaImportado && handleImportar(item); }}
+              disabled={jaImportado}
+            >
+              <Text style={[styles.importarBtnTexto, jaImportado && styles.importarBtnTextoFeito]}>
+                {jaImportado ? '✓' : '↓'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -314,6 +319,19 @@ export function ApiSearchScreen({ navigation }: Props) {
           }
         />
       )}
+      {/* Modal de detalhes */}
+      <ApiRecipeModal
+        preview={mealSelecionado
+          ? { idMeal: mealSelecionado.idMeal, strMeal: mealSelecionado.strMeal, strMealThumb: mealSelecionado.strMealThumb }
+          : null}
+        mealCompleto={mealSelecionado ?? undefined}
+        onFechar={() => setMealSelecionado(null)}
+        onImportado={(id) => {
+          setImportados((prev) => new Set([...prev, id]));
+          setMealSelecionado(null);
+        }}
+        jaImportado={mealSelecionado ? importados.has(mealSelecionado.idMeal) : false}
+      />
     </View>
   );
 }
@@ -480,14 +498,28 @@ const styles = StyleSheet.create({
   tagCinza: { backgroundColor: Colors.gray100, borderWidth: 1, borderColor: Colors.border },
   tagTextoCinza: { color: Colors.textSecondary, fontSize: 10 },
   ingredientesPreview: { fontSize: 11, color: Colors.gray500, marginBottom: 6 },
+  botoesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+  },
+  detalhesBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 6,
+    paddingVertical: 6,
+    alignItems: 'center',
+  },
+  detalhesBtnTexto: { fontSize: 12, fontWeight: '600', color: Colors.textPrimary },
   importarBtn: {
     backgroundColor: Colors.black,
     borderRadius: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    alignSelf: 'flex-start',
   },
   importarBtnFeito: { backgroundColor: Colors.gray200 },
-  importarBtnTexto: { color: Colors.white, fontSize: 12, fontWeight: '700' },
+  importarBtnTexto: { color: Colors.white, fontSize: 13, fontWeight: '700' },
   importarBtnTextoFeito: { color: Colors.gray500 },
 });
