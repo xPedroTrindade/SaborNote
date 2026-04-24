@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SESSION_KEY } from '../../App';
 import { RootStackParamList, Receita } from '../types';
 import {
   listarReceitas,
@@ -34,7 +35,13 @@ type FiltroAtivo = 'todos' | 'favoritos' | 'ingrediente';
 
 export function HomeScreen({ navigation, onLogout }: Props) {
   const [aba, setAba] = useState<AbaAtiva>('minhas');
+  const [exploradorMontado, setExploradorMontado] = useState(false);
   const [receitas, setReceitas] = useState<Receita[]>([]);
+
+  // Monta o ExploreTab apenas na primeira vez que o usuário acessa a aba
+  useEffect(() => {
+    if (aba === 'explorar') setExploradorMontado(true);
+  }, [aba]);
   const [busca, setBusca] = useState('');
   const [filtro, setFiltro] = useState<FiltroAtivo>('todos');
   const [carregando, setCarregando] = useState(false);
@@ -77,7 +84,7 @@ export function HomeScreen({ navigation, onLogout }: Props) {
         text: 'Sair',
         style: 'destructive',
         onPress: async () => {
-          await AsyncStorage.removeItem('usuarioLogado');
+          await AsyncStorage.removeItem(SESSION_KEY);
           onLogout();
         },
       },
@@ -207,8 +214,10 @@ export function HomeScreen({ navigation, onLogout }: Props) {
       )}
 
       {/* Conteúdo: Explorar */}
-      {aba === 'explorar' && (
-        <ExploreTab navigation={navigation} />
+      {exploradorMontado && (
+        <View style={aba === 'explorar' ? styles.tabAtiva : styles.tabOculta}>
+          <ExploreTab navigation={navigation} />
+        </View>
       )}
     </View>
   );
@@ -289,6 +298,8 @@ const styles = StyleSheet.create({
   },
   emptyBotaoTexto: { color: Colors.white, fontWeight: '700', fontSize: 14 },
 
+  tabAtiva: { flex: 1 },
+  tabOculta: { display: 'none' },
   fab: {
     position: 'absolute',
     bottom: 28,

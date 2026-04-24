@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
 import { buscarUsuarioPorEmail } from '../database/userRepository';
+import { SESSION_KEY } from '../../App';
 import { Colors } from '../constants/colors';
 
 type Props = {
@@ -40,7 +41,12 @@ export function LoginScreen({ navigation, onLogin }: Props) {
         Alert.alert('Erro', 'E-mail ou senha incorretos.');
         return;
       }
-      await AsyncStorage.setItem('usuarioLogado', JSON.stringify({ id: usuario.id, nome: usuario.nome, email: usuario.email }));
+      await AsyncStorage.setItem(SESSION_KEY, JSON.stringify({
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        loginTime: Date.now(),
+      }));
       onLogin();
     } catch {
       Alert.alert('Erro', 'Não foi possível fazer login.');
