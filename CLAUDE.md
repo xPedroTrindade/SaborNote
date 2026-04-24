@@ -48,5 +48,12 @@ npm run android          # open on Android emulator
 - **"Explorar"** — `ExploreTab` component, lazy-mounted on first access via `exploradorMontado` flag + `display: 'none'` style to prevent re-fetching on tab switch.
 - `ExploreTab` opens `ApiRecipeModal` on card tap (full details + import); `+` button is quick import.
 
+### Image Picker (`src/screens/RecipeFormScreen.tsx`)
+- Uses `expo-image-picker` (already installed, v17). Permissions declared in `app.json` under `plugins` and `ios.infoPlist` / `android.permissions`.
+- `requestCameraPermissionsAsync()` before `launchCameraAsync()`. `requestMediaLibraryPermissionsAsync()` before `launchImageLibraryAsync()`.
+- On Android, permission denial shows an `Alert` instructing the user to enable in system settings — do **not** call the picker if status is not `'granted'`.
+- iOS uses `ActionSheetIOS` for the photo source menu; Android uses `Alert` with options. Both end at the same `handleCamera` / `handleGaleria` handlers.
+- The `imagemUri` field stores either a local `file://` URI (from picker) or a remote `https://` URL. Both are rendered with `<Image source={{ uri }}/>`.
+
 ### Colors
 `src/constants/colors.ts` — black and white palette only. Always use `Colors.*` constants, never raw hex strings.
