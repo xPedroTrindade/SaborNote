@@ -101,28 +101,40 @@ O CRUD do projeto é centrado em **uma única entidade**: `Receita`.
 
 ## Como Executar
 
+> Não é necessário Android Studio, Xcode, chave de API, variável de ambiente ou qualquer configuração adicional. O banco de dados SQLite é criado automaticamente no primeiro uso.
+
 ### Pré-requisitos
 
-- **Node.js** 18 ou superior
-- App **Expo Go** instalado no celular ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iOS](https://apps.apple.com/app/expo-go/id982107779))
+| Requisito | Observação |
+|---|---|
+| **Node.js 18+** | [nodejs.org](https://nodejs.org) |
+| **App Expo Go** no celular | [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iOS](https://apps.apple.com/app/expo-go/id982107779) |
+| Celular e computador na **mesma rede Wi-Fi** | Necessário para o QR Code funcionar |
 
-### Instalação
+### Passo a passo
 
 ```bash
 # 1. Clonar o repositório
 git clone https://github.com/xPedroTrindade/SaborNote.git
 cd SaborNote
 
-# 2. Instalar dependências
+# 2. Instalar as dependências
 npm install
 
-# 3. Iniciar o servidor Metro (limpa o cache)
+# 3. Iniciar o servidor de desenvolvimento
 npx expo start --clear
 ```
 
-Escaneie o **QR Code** exibido no terminal com o app Expo Go.
+Após o passo 3, um **QR Code** aparecerá no terminal. Abra o app **Expo Go** no celular e escaneie o código. O app carregará em alguns segundos.
 
-> **Dica:** Se as atualizações não aparecerem no celular, pressione **`r`** no terminal do Metro para forçar o reload do bundle.
+### Primeiro acesso
+
+1. A **splash screen** com a logo do app será exibida
+2. Você chegará na tela de **Login** — crie uma conta tocando em *"Cadastre-se"*
+3. Após o cadastro, faça login com o e-mail e senha cadastrados
+4. O app estará pronto para uso
+
+> **Problema com o QR Code?** Certifique-se de que o celular e o computador estão na mesma rede Wi-Fi. Se as mudanças não refletirem, pressione **`r`** no terminal para forçar o recarregamento.
 
 ---
 
