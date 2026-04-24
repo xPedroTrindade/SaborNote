@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../types';
 import { buscarUsuarioPorEmail } from '../database/userRepository';
 import { SESSION_KEY } from '../../App';
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export function LoginScreen({ navigation, onLogin }: Props) {
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -60,7 +62,7 @@ export function LoginScreen({ navigation, onLogin }: Props) {
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 24 }]} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <Image
             source={require('../../assets/Sabor_note.png')}

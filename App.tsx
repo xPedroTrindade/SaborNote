@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Image, Animated, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initDatabase } from './src/database/database';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { Colors } from './src/constants/colors';
@@ -84,14 +85,14 @@ export default function App() {
   if (!appPronto) return null;
 
   return (
-    <>
+    <SafeAreaProvider>
       <StatusBar style="dark" />
       <AppNavigator
         autenticado={autenticado}
         onLogin={() => setAutenticado(true)}
         onLogout={() => setAutenticado(false)}
       />
-    </>
+    </SafeAreaProvider>
   );
 }
 

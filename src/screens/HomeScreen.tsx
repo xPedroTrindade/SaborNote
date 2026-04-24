@@ -11,6 +11,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SESSION_KEY } from '../../App';
 import { RootStackParamList, Receita } from '../types';
 import {
@@ -34,6 +35,7 @@ type AbaAtiva = 'minhas' | 'explorar';
 type FiltroAtivo = 'todos' | 'favoritos' | 'ingrediente';
 
 export function HomeScreen({ navigation, onLogout }: Props) {
+  const insets = useSafeAreaInsets();
   const [aba, setAba] = useState<AbaAtiva>('minhas');
   const [exploradorMontado, setExploradorMontado] = useState(false);
   const [receitas, setReceitas] = useState<Receita[]>([]);
@@ -120,7 +122,7 @@ export function HomeScreen({ navigation, onLogout }: Props) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Text style={styles.headerTitulo}>SaborNote</Text>
         <View style={styles.headerAcoes}>
           <TouchableOpacity
